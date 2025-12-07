@@ -1,33 +1,60 @@
-# LinkedIn Comments Scraper Demo
+# LinkedIn Scraper
 
-This project demonstrates how to scrape comments from a LinkedIn profile's posts using Selenium.
+Automated LinkedIn comment scraper with FastAPI.
 
 ## Setup
 
-1. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-2. Set up your LinkedIn credentials in `.env`:
-   ```
-   LINKEDIN_EMAIL=your_email@example.com
-   LINKEDIN_PASSWORD=your_password
-   LINKEDIN_PROFILE_URL=https://www.linkedin.com/in/yourprofile/
-   MAX_POSTS=10
-   SCROLL_DELAY=2
-   REQUEST_DELAY=3
-   ```
+Create `.env`:
+```
+LINKEDIN_EMAIL=your@email.com
+LINKEDIN_PASSWORD=yourpassword
+LINKEDIN_PROFILE_URL=https://www.linkedin.com/in/yourprofile/
+```
+## Usage
 
-3. Run the scraper:
-   ```
-   python main.py
-   ```
+### Run API
+```bash
+python run.py
+```
+API at `http://localhost:8000` | Docs at `/docs`
 
-The script will open Chrome, navigate to the profile, scroll through posts, load comments, and print the first 10 comments found.
+**Endpoints:**
+- `POST /scraper/scrape` - Login + scrape comments in one call
+- `GET /search/search?keyword=text` - Search comments
+- `GET /search/stats` - Get scraping statistics
 
-## Note
+### Run Script (CSV Export)
+```bash
+python main.py
+```
+Outputs to `data/linkedin_comments.csv`
 
-- The script uses a persistent Chrome profile to avoid re-login.
-- XPaths may need adjustment based on LinkedIn's current structure.
-- Ensure you have Chrome installed and webdriver-manager handles the driver.
+## API Examples
+
+**Scrape Comments:**
+```bash
+curl -X POST http://localhost:8000/scraper/scrape \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "your@email.com",
+    "password": "yourpass",
+    "profile_url": "https://linkedin.com/in/yourprofile",
+    "max_comments": 50
+  }'
+```
+
+**Search Comments:**
+```bash
+curl "http://localhost:8000/search/search?keyword=python"
+```
+
+**Get Stats:**
+```bash
+curl "http://localhost:8000/search/stats"
+```
+
+SQLite: `data/linkedin.db`
