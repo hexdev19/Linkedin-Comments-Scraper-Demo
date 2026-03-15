@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, comments_scraper, analysis, group_scraper
+from app.routers import auth, comments_scraper, analysis, group_scraper, company_scraper
 
 app = FastAPI(
     title="LinkedIn Scraper API",
@@ -20,6 +20,7 @@ app.include_router(auth.router)
 app.include_router(comments_scraper.router)
 app.include_router(analysis.router)
 app.include_router(group_scraper.router)
+app.include_router(company_scraper.router)
 
 @app.get("/")
 async def root():
