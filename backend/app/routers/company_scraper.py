@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from typing import List, Optional
 from app.schemas.company_scraper import CompanyScrapeResponse
 from app.services.company_scraper_service import scrape_companies_logic
 from app.services.auth_service import login_to_linkedin
@@ -12,17 +11,14 @@ router = APIRouter(prefix="/scraper", tags=["Company Scraper"])
 @router.get("/companies", response_model=CompanyScrapeResponse)
 async def get_companies(
     keywords: str = Query(..., description="Search keywords"),
-    geo_id: str = Query(..., description="HQ Geography ID"),
-    size_code: str = Query(..., description="Company Size Code"),
-    industry_id: str = Query(..., description="Industry Vertical ID"),
     email: str = Query(..., description="LinkedIn Email"),
     password: str = Query(..., description="LinkedIn Password"),
-    max_pages: int = Query(2, ge=1, le=10)
+    max_pages: int = Query(1, ge=1, le=10)
 ):
     with get_driver() as driver:
         try:
             login_to_linkedin(driver, email, password)
-            data = scrape_companies_logic(driver, keywords, geo_id, size_code, industry_id, max_pages)
+            data = scrape_companies_logic(driver, keywords, max_pages)
             return CompanyScrapeResponse(status="success", companies_scraped=len(data), data=data)
         except Exception as e:
             if isinstance(e, HTTPException): raise e
@@ -31,17 +27,14 @@ async def get_companies(
 @router.get("/companies/download")
 async def download_companies_csv(
     keywords: str = Query(..., description="Search keywords"),
-    geo_id: str = Query(..., description="HQ Geography ID"),
-    size_code: str = Query(..., description="Company Size Code"),
-    industry_id: str = Query(..., description="Industry Vertical ID"),
     email: str = Query(..., description="LinkedIn Email"),
     password: str = Query(..., description="LinkedIn Password"),
-    max_pages: int = Query(2, ge=1, le=10)
+    max_pages: int = Query(1, ge=1, le=10)
 ):
     with get_driver() as driver:
         try:
             login_to_linkedin(driver, email, password)
-            data = scrape_companies_logic(driver, keywords, geo_id, size_code, industry_id, max_pages)
+            data = scrape_companies_logic(driver, keywords, max_pages)
             
             flattened_data = []
             for company in data:
@@ -57,7 +50,7 @@ async def download_companies_csv(
             return StreamingResponse(
                 csv_stream,
                 media_type="text/csv",
-                headers={"Content-Disposition": "attachment; filename=linkedin_companies.csv"}
+                headers={"Content-Disposition": f"attachment; filename=linkedin_companies_{keywords.replace(' ', '_')}.csv"}
             )
         except Exception as e:
             if isinstance(e, HTTPException): raise e

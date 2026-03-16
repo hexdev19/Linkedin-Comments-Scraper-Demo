@@ -7,11 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from urllib.parse import urljoin
 from app.schemas.comments_scraper import CommentOut
 
-def clean_text(text: str) -> str:
-    if not text:
-        return ""
-    text = re.sub(r'\s+', ' ', text.strip())
-    return text
+from app.utils.parsing import clean_text
 
 def scrape_comments_logic(driver, profile_url: str, max_comments: int = 50, max_scroll: int = 20) -> List[CommentOut]:
 
