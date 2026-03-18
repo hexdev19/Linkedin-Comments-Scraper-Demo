@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="12" time="0.532" timestamp="2026-03-18T21:10:34.652962" hostname="NAW"><testcase classname="tests.test_analysis" name="test_analyze_comments" time="0.007"><failure message="assert 500 == 200&#10; +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code">client = &lt;starlette.testclient.TestClient object at 0x000001BE5CAF03D0&gt;
+
+    def test_analyze_comments(client):
+        with patch("app.routers.analysis.analyze_comments_logic") as mock_analyze:
+            mock_analyze.return_value = {"sentiment": "positive"}
+    
+            payload = {
+                "comments": [
+                    {
+                        "author": "John Doe",
+                        "timestamp": "1d",
+                        "original_text": "Great post!",
+                        "cleaned_text": "great post",
+                        "text_length": 10
+                    }
+                ]
+            }
+            response = client.post("/scraper/analyze", json=payload)
+    
+&gt;           assert response.status_code == 200
+E           assert 500 == 200
+E            +  where 500 = &lt;Response [500 Internal Server Error]&gt;.status_code
+
+tests\test_analysis.py:20: AssertionError</failure></testcase><testcase classname="tests.test_analysis" name="test_analyze_comments_failure" time="0.003" /><testcase classname="tests.test_auth" name="test_login_success" time="0.009" /><testcase classname="tests.test_auth" name="test_login_failure" time="0.004" /><testcase classname="tests.test_comments_scraper" name="test_get_comments" time="0.005" /><testcase classname="tests.test_comments_scraper" name="test_download_comments_csv" time="0.005" /><testcase classname="tests.test_company_scraper" name="test_get_company" time="0.005" /><testcase classname="tests.test_company_scraper" name="test_download_company_csv" time="0.005"><failure message="AssertionError: assert 'linkedin_company_employees.csv' in 'attachment; filename=linkedin_companies_test.csv'&#10; +  where 'attachment; filename=linkedin_companies_test.csv' = &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt;('content-disposition', '')&#10; +    where &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt; = Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'}).get&#10; +      where Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'}) = &lt;Response [200 OK]&gt;.headers">client = &lt;starlette.testclient.TestClient object at 0x000001BE5CC908E0&gt;
+
+    def test_download_company_csv(client):
+        with patch("app.routers.company_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.company_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.company_scraper.scrape_companies_logic") as mock_scrape, \
+             patch("app.routers.company_scraper.generate_csv_stream") as mock_csv:
+    
+            mock_driver_cls.return_value.__enter__.return_value = MagicMock()
+            mock_login.return_value = True
+            mock_scrape.return_value = []
+            mock_csv.return_value = iter([b"col1\n", b"val1\n"])
+    
+            response = client.get("/scraper/companies/download?keywords=test&amp;email=test@example.com&amp;password=password")
+    
+            assert response.status_code == 200
+            assert response.headers.get("content-type") == "text/csv; charset=utf-8"
+&gt;           assert "linkedin_company_employees.csv" in response.headers.get("content-disposition", "")
+E           AssertionError: assert 'linkedin_company_employees.csv' in 'attachment; filename=linkedin_companies_test.csv'
+E            +  where 'attachment; filename=linkedin_companies_test.csv' = &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt;('content-disposition', '')
+E            +    where &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt; = Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'}).get
+E            +      where Headers({'content-disposition': 'attachment; filename=linkedin_companies_test.csv', 'content-type': 'text/csv; charset=utf-8'}) = &lt;Response [200 OK]&gt;.headers
+
+tests\test_company_scraper.py:35: AssertionError</failure></testcase><testcase classname="tests.test_group_scraper" name="test_get_group" time="0.006" /><testcase classname="tests.test_group_scraper" name="test_download_group_csv" time="0.005"><failure message="AssertionError: assert 'linkedin_group_members.csv' in 'attachment; filename=group_members.csv'&#10; +  where 'attachment; filename=group_members.csv' = &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'})&gt;('content-disposition', '')&#10; +    where &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'})&gt; = Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'}).get&#10; +      where Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'}) = &lt;Response [200 OK]&gt;.headers">client = &lt;starlette.testclient.TestClient object at 0x000001BE5CDAE200&gt;
+
+    def test_download_group_csv(client):
+        with patch("app.routers.group_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.group_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.group_scraper.scrape_group_members_logic") as mock_scrape, \
+             patch("app.routers.group_scraper.generate_csv_stream") as mock_csv:
+    
+            mock_driver_cls.return_value.__enter__.return_value = MagicMock()
+            mock_login.return_value = True
+            mock_scrape.return_value = []
+            mock_csv.return_value = iter([b"col1\n", b"val1\n"])
+    
+            response = client.get("/scraper/group-members/download?group_url=https://linkedin.com/groups/123&amp;email=test@example.com&amp;password=password")
+    
+            assert response.status_code == 200
+            assert response.headers.get("content-type") == "text/csv; charset=utf-8"
+&gt;           assert "linkedin_group_members.csv" in response.headers.get("content-disposition", "")
+E           AssertionError: assert 'linkedin_group_members.csv' in 'attachment; filename=group_members.csv'
+E            +  where 'attachment; filename=group_members.csv' = &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'})&gt;('content-disposition', '')
+E            +    where &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'})&gt; = Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'}).get
+E            +      where Headers({'content-disposition': 'attachment; filename=group_members.csv', 'content-type': 'text/csv; charset=utf-8'}) = &lt;Response [200 OK]&gt;.headers
+
+tests\test_group_scraper.py:34: AssertionError</failure></testcase><testcase classname="tests.test_people_scraper" name="test_get_people" time="0.005" /><testcase classname="tests.test_people_scraper" name="test_download_people_csv" time="0.005"><failure message="AssertionError: assert 'linkedin_people.csv' in 'attachment; filename=linkedin_people_test.csv'&#10; +  where 'attachment; filename=linkedin_people_test.csv' = &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt;('content-disposition', '')&#10; +    where &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt; = Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'}).get&#10; +      where Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'}) = &lt;Response [200 OK]&gt;.headers">client = &lt;starlette.testclient.TestClient object at 0x000001BE5CE2BCA0&gt;
+
+    def test_download_people_csv(client):
+        with patch("app.routers.people_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.people_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.people_scraper.scrape_people_logic") as mock_scrape, \
+             patch("app.routers.people_scraper.generate_csv_stream") as mock_csv:
+    
+            mock_driver_cls.return_value.__enter__.return_value = MagicMock()
+            mock_login.return_value = True
+            mock_scrape.return_value = []
+            mock_csv.return_value = iter([b"col1\n", b"val1\n"])
+    
+            response = client.get("/scraper/people/download?keywords=test&amp;email=test@example.com&amp;password=password")
+    
+            assert response.status_code == 200
+            assert response.headers.get("content-type") == "text/csv; charset=utf-8"
+&gt;           assert "linkedin_people.csv" in response.headers.get("content-disposition", "")
+E           AssertionError: assert 'linkedin_people.csv' in 'attachment; filename=linkedin_people_test.csv'
+E            +  where 'attachment; filename=linkedin_people_test.csv' = &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt;('content-disposition', '')
+E            +    where &lt;bound method Headers.get of Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'})&gt; = Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'}).get
+E            +      where Headers({'content-disposition': 'attachment; filename=linkedin_people_test.csv', 'content-type': 'text/csv; charset=utf-8'}) = &lt;Response [200 OK]&gt;.headers
+
+tests\test_people_scraper.py:35: AssertionError</failure></testcase></testsuite></testsuites>

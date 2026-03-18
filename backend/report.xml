@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="7" skipped="0" tests="12" time="0.763" timestamp="2026-03-18T21:09:18.716873" hostname="NAW"><testcase classname="tests.test_analysis" name="test_analyze_comments" time="0.007"><failure message="assert 422 == 200&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code">client = &lt;starlette.testclient.TestClient object at 0x0000017247C40400&gt;
+
+    def test_analyze_comments(client):
+        with patch("app.routers.analysis.analyze_comments_logic") as mock_analyze:
+            mock_analyze.return_value = {"sentiment": "positive"}
+    
+            response = client.post("/scraper/analyze", json={"comments": ["Great post!", "I agree"]})
+    
+&gt;           assert response.status_code == 200
+E           assert 422 == 200
+E            +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code
+
+tests\test_analysis.py:9: AssertionError</failure></testcase><testcase classname="tests.test_analysis" name="test_analyze_comments_failure" time="0.003" /><testcase classname="tests.test_auth" name="test_login_success" time="0.009" /><testcase classname="tests.test_auth" name="test_login_failure" time="0.004" /><testcase classname="tests.test_comments_scraper" name="test_get_comments" time="0.005" /><testcase classname="tests.test_comments_scraper" name="test_download_comments_csv" time="0.005" /><testcase classname="tests.test_company_scraper" name="test_get_company" time="0.003"><failure message="AttributeError: &lt;module 'app.routers.company_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\company_scraper.py'&gt; does not have the attribute 'scrape_company_employees_logic'">client = &lt;starlette.testclient.TestClient object at 0x0000017247DE76A0&gt;
+
+    def test_get_company(client):
+&gt;       with patch("app.routers.company_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.company_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.company_scraper.scrape_company_employees_logic") as mock_scrape:
+
+tests\test_company_scraper.py:4: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1438: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;unittest.mock._patch object at 0x0000017247F49E40&gt;
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+&gt;           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: &lt;module 'app.routers.company_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\company_scraper.py'&gt; does not have the attribute 'scrape_company_employees_logic'
+
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1411: AttributeError</failure></testcase><testcase classname="tests.test_company_scraper" name="test_download_company_csv" time="0.002"><failure message="AttributeError: &lt;module 'app.routers.company_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\company_scraper.py'&gt; does not have the attribute 'scrape_company_employees_logic'">client = &lt;starlette.testclient.TestClient object at 0x0000017247DE76A0&gt;
+
+    def test_download_company_csv(client):
+&gt;       with patch("app.routers.company_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.company_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.company_scraper.scrape_company_employees_logic") as mock_scrape, \
+             patch("app.routers.company_scraper.generate_csv_stream") as mock_csv:
+
+tests\test_company_scraper.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1438: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;unittest.mock._patch object at 0x0000017247F36770&gt;
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+&gt;           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: &lt;module 'app.routers.company_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\company_scraper.py'&gt; does not have the attribute 'scrape_company_employees_logic'
+
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1411: AttributeError</failure></testcase><testcase classname="tests.test_group_scraper" name="test_get_group" time="0.005"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">client = &lt;starlette.testclient.TestClient object at 0x0000017247DE40A0&gt;
+
+    def test_get_group(client):
+        with patch("app.routers.group_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.group_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.group_scraper.scrape_group_members_logic") as mock_scrape:
+    
+            mock_driver_cls.return_value.__enter__.return_value = MagicMock()
+            mock_login.return_value = True
+            mock_scrape.return_value = []
+    
+            response = client.get("/scraper/group?group_url=https://linkedin.com/groups/123&amp;email=test@example.com&amp;password=password&amp;max_members=10")
+    
+&gt;           assert response.status_code == 200
+E           assert 404 == 200
+E            +  where 404 = &lt;Response [404 Not Found]&gt;.status_code
+
+tests\test_group_scraper.py:14: AssertionError</failure></testcase><testcase classname="tests.test_group_scraper" name="test_download_group_csv" time="0.004"><failure message="assert 404 == 200&#10; +  where 404 = &lt;Response [404 Not Found]&gt;.status_code">client = &lt;starlette.testclient.TestClient object at 0x0000017247DE40A0&gt;
+
+    def test_download_group_csv(client):
+        with patch("app.routers.group_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.group_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.group_scraper.scrape_group_members_logic") as mock_scrape, \
+             patch("app.routers.group_scraper.generate_csv_stream") as mock_csv:
+    
+            mock_driver_cls.return_value.__enter__.return_value = MagicMock()
+            mock_login.return_value = True
+            mock_scrape.return_value = []
+            mock_csv.return_value = iter([b"col1\n", b"val1\n"])
+    
+            response = client.get("/scraper/group/download?group_url=https://linkedin.com/groups/123&amp;email=test@example.com&amp;password=password")
+    
+&gt;           assert response.status_code == 200
+E           assert 404 == 200
+E            +  where 404 = &lt;Response [404 Not Found]&gt;.status_code
+
+tests\test_group_scraper.py:32: AssertionError</failure></testcase><testcase classname="tests.test_people_scraper" name="test_get_people" time="0.003"><failure message="AttributeError: &lt;module 'app.routers.people_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\people_scraper.py'&gt; does not have the attribute 'scrape_people_search_logic'">client = &lt;starlette.testclient.TestClient object at 0x0000017247DE4C40&gt;
+
+    def test_get_people(client):
+&gt;       with patch("app.routers.people_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.people_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.people_scraper.scrape_people_search_logic") as mock_scrape:
+
+tests\test_people_scraper.py:4: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1438: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;unittest.mock._patch object at 0x0000017247FDD8D0&gt;
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+&gt;           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: &lt;module 'app.routers.people_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\people_scraper.py'&gt; does not have the attribute 'scrape_people_search_logic'
+
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1411: AttributeError</failure></testcase><testcase classname="tests.test_people_scraper" name="test_download_people_csv" time="0.002"><failure message="AttributeError: &lt;module 'app.routers.people_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\people_scraper.py'&gt; does not have the attribute 'scrape_people_search_logic'">client = &lt;starlette.testclient.TestClient object at 0x0000017247DE4C40&gt;
+
+    def test_download_people_csv(client):
+&gt;       with patch("app.routers.people_scraper.get_driver") as mock_driver_cls, \
+             patch("app.routers.people_scraper.login_to_linkedin") as mock_login, \
+             patch("app.routers.people_scraper.scrape_people_search_logic") as mock_scrape, \
+             patch("app.routers.people_scraper.generate_csv_stream") as mock_csv:
+
+tests\test_people_scraper.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1438: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;unittest.mock._patch object at 0x0000017247F35420&gt;
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+&gt;           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: &lt;module 'app.routers.people_scraper' from 'C:\\Nouri\\CODING\\Linkedin-Comments-Scraper-Demo\\backend\\app\\routers\\people_scraper.py'&gt; does not have the attribute 'scrape_people_search_logic'
+
+C:\Users\noure\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1411: AttributeError</failure></testcase></testsuite></testsuites>

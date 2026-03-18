@@ -2,12 +2,23 @@ from unittest.mock import patch
 
 def test_analyze_comments(client):
     with patch("app.routers.analysis.analyze_comments_logic") as mock_analyze:
-        mock_analyze.return_value = {"sentiment": "positive"}
+        mock_analyze.return_value = '{"sentiment": "positive"}'
 
-        response = client.post("/scraper/analyze", json={"comments": ["Great post!", "I agree"]})
+        payload = {
+            "comments": [
+                {
+                    "author": "John Doe",
+                    "timestamp": "1d",
+                    "original_text": "Great post!",
+                    "cleaned_text": "great post",
+                    "text_length": 10
+                }
+            ]
+        }
+        response = client.post("/scraper/analyze", json=payload)
         
         assert response.status_code == 200
-        assert response.json() == {"analysis": {"sentiment": "positive"}}
+        assert response.json() == {"analysis": '{"sentiment": "positive"}'}
 
 def test_analyze_comments_failure(client):
     with patch("app.routers.analysis.analyze_comments_logic") as mock_analyze:

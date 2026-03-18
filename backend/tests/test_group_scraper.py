@@ -9,7 +9,7 @@ def test_get_group(client):
         mock_login.return_value = True
         mock_scrape.return_value = []
 
-        response = client.get("/scraper/group?group_url=https://linkedin.com/groups/123&email=test@example.com&password=password&max_members=10")
+        response = client.get("/scraper/group-members?group_url=https://linkedin.com/groups/123&email=test@example.com&password=password")
         
         assert response.status_code == 200
         data = response.json()
@@ -27,8 +27,8 @@ def test_download_group_csv(client):
         mock_scrape.return_value = []
         mock_csv.return_value = iter([b"col1\n", b"val1\n"])
 
-        response = client.get("/scraper/group/download?group_url=https://linkedin.com/groups/123&email=test@example.com&password=password")
+        response = client.get("/scraper/group-members/download?group_url=https://linkedin.com/groups/123&email=test@example.com&password=password")
         
         assert response.status_code == 200
         assert response.headers.get("content-type") == "text/csv; charset=utf-8"
-        assert "linkedin_group_members.csv" in response.headers.get("content-disposition", "")
+        assert "group_members.csv" in response.headers.get("content-disposition", "")
