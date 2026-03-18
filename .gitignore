@@ -1,3 +1,6 @@
 .env
 /chrome_profile
 ext.crx
+__pycache__/
+
+
