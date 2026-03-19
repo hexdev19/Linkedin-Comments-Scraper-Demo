@@ -2,5 +2,5 @@
 /chrome_profile
 ext.crx
 __pycache__/
-
+chrome_profile/
 

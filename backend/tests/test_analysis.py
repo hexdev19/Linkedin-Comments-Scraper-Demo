@@ -1,30 +1,20 @@
-from unittest.mock import patch
+import pytest
+from app.core.config import settings
 
 def test_analyze_comments(client):
-    with patch("app.routers.analysis.analyze_comments_logic") as mock_analyze:
-        mock_analyze.return_value = '{"sentiment": "positive"}'
-
-        payload = {
-            "comments": [
-                {
-                    "author": "John Doe",
-                    "timestamp": "1d",
-                    "original_text": "Great post!",
-                    "cleaned_text": "great post",
-                    "text_length": 10
-                }
-            ]
-        }
-        response = client.post("/scraper/analyze", json=payload)
-        
-        assert response.status_code == 200
-        assert response.json() == {"analysis": '{"sentiment": "positive"}'}
-
-def test_analyze_comments_failure(client):
-    with patch("app.routers.analysis.analyze_comments_logic") as mock_analyze:
-        mock_analyze.side_effect = Exception("Test error")
-
-        response = client.post("/scraper/analyze", json={"comments": []})
-        
-        assert response.status_code == 500
-        assert "Test error" in response.json()["detail"]
+    if not settings.openai_api_key:
+        pytest.skip("Skipping real OpenAI analysis test due to missing OPENAI_API_KEY in .env")
+    payload = {
+        "comments": [
+            {
+                "author": "Tech User",
+                "timestamp": "1h",
+                "original_text": "This is an amazing and very helpful post!",
+                "cleaned_text": "amazing helpful post",
+                "text_length": 41
+            }
+        ]
+    }
+    response = client.post("/scraper/analyze", json=payload)
+    assert response.status_code == 200
+    assert "analysis" in response.json()

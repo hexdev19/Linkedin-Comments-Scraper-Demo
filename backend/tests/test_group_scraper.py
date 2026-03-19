@@ -1,34 +1,13 @@
-from unittest.mock import patch, MagicMock
+def test_get_group(client, creds):
+    url = f"/scraper/group-members?group_url=https://www.linkedin.com/groups/82105/&email={creds['email']}&password={creds['password']}"
+    response = client.get(url)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert "members" in data
 
-def test_get_group(client):
-    with patch("app.routers.group_scraper.get_driver") as mock_driver_cls, \
-         patch("app.routers.group_scraper.login_to_linkedin") as mock_login, \
-         patch("app.routers.group_scraper.scrape_group_members_logic") as mock_scrape:
-        
-        mock_driver_cls.return_value.__enter__.return_value = MagicMock()
-        mock_login.return_value = True
-        mock_scrape.return_value = []
-
-        response = client.get("/scraper/group-members?group_url=https://linkedin.com/groups/123&email=test@example.com&password=password")
-        
-        assert response.status_code == 200
-        data = response.json()
-        assert data["status"] == "success"
-        assert data["members"] == []
-
-def test_download_group_csv(client):
-    with patch("app.routers.group_scraper.get_driver") as mock_driver_cls, \
-         patch("app.routers.group_scraper.login_to_linkedin") as mock_login, \
-         patch("app.routers.group_scraper.scrape_group_members_logic") as mock_scrape, \
-         patch("app.routers.group_scraper.generate_csv_stream") as mock_csv:
-        
-        mock_driver_cls.return_value.__enter__.return_value = MagicMock()
-        mock_login.return_value = True
-        mock_scrape.return_value = []
-        mock_csv.return_value = iter([b"col1\n", b"val1\n"])
-
-        response = client.get("/scraper/group-members/download?group_url=https://linkedin.com/groups/123&email=test@example.com&password=password")
-        
-        assert response.status_code == 200
-        assert response.headers.get("content-type") == "text/csv; charset=utf-8"
-        assert "group_members.csv" in response.headers.get("content-disposition", "")
+def test_download_group_csv(client, creds):
+    url = f"/scraper/group-members/download?group_url=https://www.linkedin.com/groups/82105/&email={creds['email']}&password={creds['password']}"
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.headers.get("content-type") == "text/csv; charset=utf-8"

@@ -9,7 +9,7 @@ def analyze_comments_logic(comments: List[CommentOut]) -> str:
 
     client = OpenAI(api_key=settings.openai_api_key)
     
-    comments_text = "\n".join([f"- {c.author}: {c.original_text}" for r in comments])
+    comments_text = "\n".join([f"- {c.author}: {c.original_text}" for c in comments])
     
     prompt = f"""
     Analyze the following LinkedIn comments and provide a concise, insightful one-paragraph summary. 
